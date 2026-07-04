@@ -1,8 +1,10 @@
-const express = require('express');
-const app = express();
-
-const PORT=3002;
+const express = require('express')
+const app = express()
+const PORT = process.env.PORT || 3002
+console.log("backend")
+//web server :
 app.use(express.static("frontend"))
-app.listen(PORT,function(){
-    console.log("Succesfully running at http://localhost:"+PORT);
-});
+
+app.listen(PORT, function(){
+    console.log(`successfully running at http://localhost:${PORT}`)
+})

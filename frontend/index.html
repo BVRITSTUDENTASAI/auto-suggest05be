@@ -3,36 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="index.css">
+    <title>Auto Suggest</title>
+
+    <style>
+body{
+    margin:0;
+    font-family:"Segoe UI",Arial,sans-serif;
+    background:linear-gradient(135deg,#eef4ff,#f8fbff);
+}
+
+.left-bar{
+    position:fixed;
+    top:20px;
+    left:25px;
+    font-size:18px;
+    color:#555;
+    font-weight:500;
+}
+
+.right-bar{
+    position:fixed;
+    top:20px;
+    right:25px;
+    font-size:18px;
+    color:#555;
+    font-weight:500;
+}
+
+#box{
+    width:650px;
+    margin:70px auto;
+    padding:45px;
+    background:white;
+    border-radius:22px;
+    box-shadow:0 12px 35px rgba(0,0,0,.12);
+    text-align:center;
+}
+
+h1{
+    margin:0;
+    font-size:58px;
+    font-weight:700;
+}
+
+#being{
+    color:#1e88e5;
+}
+
+#infinity{
+    color:#222;
+}
+
+p{
+    margin-top:18px;
+    color:#666;
+    font-size:16px;
+}
+
+#search{
+    width:460px;
+    margin:35px auto 15px;
+    border:2px solid #d7d7d7;
+    border-radius:50px;
+    display:flex;
+    align-items:center;
+    padding:12px 18px;
+    background:white;
+    transition:.3s;
+}
+
+#search:hover{
+    box-shadow:0 5px 15px rgba(30,136,229,.18);
+}
+
+#search:focus-within{
+    border-color:#1e88e5;
+    box-shadow:0 5px 18px rgba(30,136,229,.25);
+}
+
+#icon{
+    font-size:20px;
+    color:#888;
+    margin-right:12px;
+}
+
+#search input{
+    width:100%;
+    border:none;
+    outline:none;
+    font-size:17px;
+    background:transparent;
+}
+#suggestions-box{
+    width:495px;
+    margin:0 auto;
+    background:white;
+    border:2px solid black;      /* Outer black border */
+    border-radius:16px;
+    box-shadow:0 8px 25px rgba(0,0,0,.12);
+    overflow:hidden;
+}
+
+.suggestion{
+    padding:14px 18px;
+    font-size:17px;
+    color:#333;
+    border-bottom:1px solid black;   /* Black divider */
+    cursor:pointer;
+    transition:.25s;
+}
+
+.suggestion:last-child{
+    border-bottom:none;
+}
+
+.suggestion:hover{
+    background:#eaf4ff;
+    color:#1e88e5;
+    padding-left:28px;
+}
+    </style>
 </head>
+
 <body>
-    <div id="nav">
-        <a href="/">Home</a>
-        <a href="./gitpulse.html" target="_blank">GitPulse</a>
-        <a href="./askgemini (1).html" target="_blank">AskGemini</a>
-        <a href="./codeforces-insights.html" target="_blank">Codeforces Insights</a>
-        <a href="https://auto-suggest05be.onrender.com/" target="_blank">Auto suggest</a>
-        <a href="./leetcode-stats.html" target="_blank">Leetcode Insights</a>
+    <span class="left-bar">⚙️ Settings</span>
+
+<span class="right-bar">🟢 Online &nbsp; | &nbsp; 🕒 0 ms</span>
+
+<div id="box">
+
+    <h1>
+        <span id="being">🚀 Being</span>
+        <span id="infinity">Infinity ♾️</span>
+    </h1>
+
+    <p>
+        🌍 One million planets &nbsp; • &nbsp;
+        ⚙️ Four algorithms &nbsp; • &nbsp;
+        💡 Prefix Based Auto Suggest
+    </p>
+
+    <div id="search">
+        <span id="icon">🔎</span>
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="⌨️ Start typing to search..."
+        >
     </div>
-    <div id="home">
-        
-    <h1> Home Page</h1>
-    <p id="p1">This page contains Operations on user cards</p>
-    <p id="p2">Toggle to get random user and much more</p>
-    </div>
-    <div id="card">
-        <div id="card-img">
-        <img id="img"src="./images/jane.png" alt="random user image" >
-    </div>
-    <div id="action">
-    <h1 id="card-name">Jane</h1>
-    <p id="card-gender">Female</p>
-    <button onclick="toggle()" id="card-toggle">Toggle</button>
-    <br>
-    <button onclick="getRandomUser()" id="card-random">Random User</button>
- </div>
- </div>
-    <script src="index.js"></script>
+
+    <div id="suggestions-box"></div>
+
+</div>
+<script>
+
+var searchBox = document.getElementById("searchInput");
+var suggestionBox = document.getElementById("suggestions-box");
+
+searchBox.addEventListener("input", function(){
+
+    var inputValue = this.value.trim();
+
+    if(inputValue.length == 0){
+        suggestionBox.innerHTML = "";
+        return;
+    }
+
+    var url =
+    "https://autosuggest-backend.onrender.com/api/autosuggest?q="
+    + inputValue +
+    "&algorithm=brute&limit=10&weighted=false";
+
+    fetch(url)
+    .then(function(response){
+        return response.json();
+    })
+    .then(function(data){
+
+        console.log(data);
+
+        var resultArray = data.results;
+        var html = "";
+
+        for(var i=0;i<resultArray.length;i++)
+        {
+            html += "<div class='suggestion'>" +
+                    resultArray[i].text +
+                    "</div>";
+        }
+
+        suggestionBox.innerHTML = html;
+
+    })
+    .catch(function(error){
+        console.log(error);
+    });
+
+});
+
+</script>
+
 </body>
 </html>
